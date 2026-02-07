@@ -1,0 +1,80 @@
+2026-02-07 17:07:25.030 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:07:25.033 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:07:25.033 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:07:25.055 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:07:25.059 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:07:25.060 INFO  [server] Blockchain connection initialized
+2026-02-07 17:07:25.061 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:07:25.064 INFO  [server] Server listening on port 3001
+2026-02-07 17:07:25.064 INFO  [server] Environment: development
+2026-02-07 17:07:25.065 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:07:25.065 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:07:25.065 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:07:25.065 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.075 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.077 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:09:07.079 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.100 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:09:07.103 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:09:07.104 INFO  [server] Blockchain connection initialized
+2026-02-07 17:09:07.105 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:09:07.108 INFO  [server] Server listening on port 3001
+2026-02-07 17:09:07.108 INFO  [server] Environment: development
+2026-02-07 17:09:07.109 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:09:07.109 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:09:07.109 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:09:07.109 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.235 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.236 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:12:01.237 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.260 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:12:01.265 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:12:01.267 INFO  [server] Blockchain connection initialized
+2026-02-07 17:12:01.271 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:12:01.277 INFO  [server] Server listening on port 3001
+2026-02-07 17:12:01.277 INFO  [server] Environment: development
+2026-02-07 17:12:01.277 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:12:01.278 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:12:01.278 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:12:01.279 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.207 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.209 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:13:51.209 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.231 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:13:51.234 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:13:51.235 INFO  [server] Blockchain connection initialized
+2026-02-07 17:13:51.236 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:13:51.239 INFO  [server] Server listening on port 3001
+2026-02-07 17:13:51.239 INFO  [server] Environment: development
+2026-02-07 17:13:51.239 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:13:51.240 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:13:51.240 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:13:51.240 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.459 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.461 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:14:23.462 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.484 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:14:23.489 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:14:23.490 INFO  [server] Blockchain connection initialized
+2026-02-07 17:14:23.490 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 17:14:23.492 INFO  [server] Server listening on port 3001
+2026-02-07 17:14:23.494 INFO  [server] Environment: development
+2026-02-07 17:14:23.494 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:14:23.495 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:14:23.495 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:14:23.496 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.409 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.411 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:14:31.412 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.435 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:14:31.440 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:14:31.440 INFO  [server] Blockchain connection initialized
+2026-02-07 17:14:31.441 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 17:14:31.443 INFO  [server] Server listening on port 3001
+2026-02-07 17:14:31.443 INFO  [server] Environment: development
+2026-02-07 17:14:31.445 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:14:31.445 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:14:31.445 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:14:31.446 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:20:30.321 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 5.918 ms
+2026-02-07 17:20:30.490 INFO  [server] ::1 - GET /favicon.ico HTTP/1.1 404 21 - 1.059 ms
