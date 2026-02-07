@@ -1,27 +1,32 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Shield, ArrowLeft, Navigation, DollarSign, Heart, BatteryMedium } from "lucide-react";
+import { Shield, ArrowLeft, Navigation, DollarSign, Heart, BatteryMedium, CheckCircle2 } from "lucide-react";
 import GoogleMapComponent from "./GoogleMapComponent";
 import ActivityFeed from "./ActivityFeed";
 import VerificationFeed from "./VerificationFeed";
+import type { Disaster, EvaluationResult, UserLocation } from "@/lib/types";
 
 interface DashboardProps {
   userMessage: string;
+  userLocation: UserLocation | null;
+  disaster: Disaster | null;
+  evaluationResult: EvaluationResult | null;
   onBack: () => void;
 }
 
-const USER_LOCATION = { lat: 51.752, lng: -1.2577 }; // Oxford
-const DISASTER_ZONE = { lat: 51.749, lng: -1.26, radius: 800 };
+export default function Dashboard({ userMessage, userLocation, disaster, evaluationResult, onBack }: DashboardProps) {
+  const mapCenter = userLocation ?? { lat: 51.752, lng: -1.2577 };
+  const disasterZone = disaster
+    ? { lat: disaster.lat, lng: disaster.lon, radius: disaster.radius * 1000 } // km → m
+    : { lat: mapCenter.lat, lng: mapCenter.lng - 0.002, radius: 800 };
 
-const STATS = [
-  { label: "Active Drones", value: "12", icon: <Navigation className="w-4 h-4" />, color: "text-primary" },
-  { label: "Funds Deployed", value: "4,500 FLR", icon: <DollarSign className="w-4 h-4" />, color: "text-amber-500" },
-  { label: "Lives Aided", value: "34", icon: <Heart className="w-4 h-4" />, color: "text-danger" },
-  { label: "Fleet Battery", value: "82%", icon: <BatteryMedium className="w-4 h-4" />, color: "text-success" },
-];
-
-export default function Dashboard({ userMessage, onBack }: DashboardProps) {
+  const STATS = [
+    { label: "Active Drones", value: "12", icon: <Navigation className="w-4 h-4" />, color: "text-primary" },
+    { label: "Funds Deployed", value: "4,500 FLR", icon: <DollarSign className="w-4 h-4" />, color: "text-amber-500" },
+    { label: "Lives Aided", value: "34", icon: <Heart className="w-4 h-4" />, color: "text-danger" },
+    { label: "Fleet Battery", value: "82%", icon: <BatteryMedium className="w-4 h-4" />, color: "text-success" },
+  ];
   return (
     <div className="flex flex-col h-screen bg-background">
       {/* Header */}
@@ -50,9 +55,19 @@ export default function Dashboard({ userMessage, onBack }: DashboardProps) {
         {/* Status */}
         <div className="flex items-center gap-1.5 text-xs font-medium text-success">
           <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          Mission Active
+          {evaluationResult?.status === "PROCESSED" ? "Mission Active" : "Pending"}
         </div>
       </header>
+
+      {/* Verdict banner */}
+      {evaluationResult?.final_verdict && (
+        <div className="flex items-center gap-2 px-6 py-2.5 bg-success/10 border-b border-success/20">
+          <CheckCircle2 className="w-4 h-4 text-success shrink-0" />
+          <p className="text-xs text-success font-medium truncate">
+            {evaluationResult.final_verdict}
+          </p>
+        </div>
+      )}
 
       {/* Stats Bar */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-px bg-border">
@@ -79,8 +94,8 @@ export default function Dashboard({ userMessage, onBack }: DashboardProps) {
           {/* Map */}
           <div className="h-[55%] p-4 pb-2">
             <GoogleMapComponent
-              userLocation={USER_LOCATION}
-              disasterZone={DISASTER_ZONE}
+              userLocation={mapCenter}
+              disasterZone={disasterZone}
               className="h-full"
             />
           </div>

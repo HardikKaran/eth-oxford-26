@@ -1,10 +1,12 @@
 import os
 import asyncio
-from fastapi import FastAPI, HTTPException
+from typing import Optional
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from geopy.distance import geodesic
-from langchain_openai import ChatOpenAI
+from geopy.geocoders import Nominatim
+from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import SystemMessage, HumanMessage
 
 app = FastAPI()
@@ -24,15 +26,18 @@ DUMMY_DISASTERS = [
     {"id": "d3", "name": "Oxford Flash Flood", "lat": 51.7534, "lon": -1.2540, "radius": 100},
 ]
 
+# Geocoder for reverse-geocoding user coordinates to a place name
+geolocator = Nominatim(user_agent="aegis-disaster-relief")
+
 class AidRequest(BaseModel):
     disaster_id: str
-    aid_type: str
     description: str
     lat: float
     lng: float
+    aid_type: Optional[str] = None  # Optional — derived from description if not provided
 
 def run_debate(aid_type, description):
-    llm = ChatOpenAI(model="gpt-4o", temperature=0.7, openai_api_key="YOUR_OPENAI_KEY")
+    llm = ChatAnthropic(model="claude-3-5-sonnet-20241022", temperature=0.7, anthropic_api_key="YOUR_ANTHROPIC_API_KEY")
     
     personalities = {
         "The Skeptic": "Your goal is to find signs of fraud or laziness in the request.",
@@ -57,6 +62,43 @@ def run_debate(aid_type, description):
 async def get_disasters():
     return DUMMY_DISASTERS
 
+@app.get("/nearby")
+async def check_nearby(lat: float = Query(...), lng: float = Query(...)):
+    """Check if user is near any known disaster. Returns closest threat or safe status."""
+    closest = None
+    closest_distance = float("inf")
+
+    for disaster in DUMMY_DISASTERS:
+        distance = geodesic((lat, lng), (disaster["lat"], disaster["lon"])).km
+        if distance <= disaster["radius"] and distance < closest_distance:
+            closest = disaster
+            closest_distance = distance
+
+    # Reverse-geocode to get a human-readable location name
+    location_name = "Unknown Location"
+    try:
+        location = geolocator.reverse(f"{lat}, {lng}", exactly_one=True, language="en")
+        if location:
+            addr = location.raw.get("address", {})
+            city = addr.get("city") or addr.get("town") or addr.get("village") or addr.get("county", "")
+            country = addr.get("country", "")
+            location_name = f"{city}, {country}" if city else country
+    except Exception:
+        pass
+
+    if closest:
+        return {
+            "safe": False,
+            "disaster": {**closest, "distance_km": round(closest_distance, 2)},
+            "distance_km": round(closest_distance, 2),
+            "location_name": location_name,
+        }
+
+    return {
+        "safe": True,
+        "location_name": location_name,
+    }
+
 @app.post("/evaluate")
 async def evaluate_aid(req: AidRequest):
     # 1. Spatial Validation
@@ -72,8 +114,9 @@ async def evaluate_aid(req: AidRequest):
             "reason": f"User is {round(distance)}km away. Outside the {disaster['radius']}km emergency zone."
         }
 
-    # 2. AI Debate
-    debate_results = run_debate(req.aid_type, req.description)
+    # 2. AI Debate — derive aid_type from description if not provided
+    aid_type = req.aid_type or req.description.split(".")[0][:50]
+    debate_results = run_debate(aid_type, req.description)
     return {
         "status": "PROCESSED",
         "distance_km": round(distance, 2),
