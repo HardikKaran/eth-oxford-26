@@ -1,0 +1,276 @@
+2026-02-07 17:07:25.030 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:07:25.033 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:07:25.033 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:07:25.055 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:07:25.059 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:07:25.060 INFO  [server] Blockchain connection initialized
+2026-02-07 17:07:25.061 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:07:25.064 INFO  [server] Server listening on port 3001
+2026-02-07 17:07:25.064 INFO  [server] Environment: development
+2026-02-07 17:07:25.065 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:07:25.065 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:07:25.065 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:07:25.065 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.075 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.077 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:09:07.079 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:09:07.100 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:09:07.103 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:09:07.104 INFO  [server] Blockchain connection initialized
+2026-02-07 17:09:07.105 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:09:07.108 INFO  [server] Server listening on port 3001
+2026-02-07 17:09:07.108 INFO  [server] Environment: development
+2026-02-07 17:09:07.109 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:09:07.109 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:09:07.109 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:09:07.109 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.235 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.236 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:12:01.237 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:12:01.260 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:12:01.265 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:12:01.267 INFO  [server] Blockchain connection initialized
+2026-02-07 17:12:01.271 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:12:01.277 INFO  [server] Server listening on port 3001
+2026-02-07 17:12:01.277 INFO  [server] Environment: development
+2026-02-07 17:12:01.277 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:12:01.278 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:12:01.278 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:12:01.279 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.207 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.209 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:13:51.209 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:13:51.231 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:13:51.234 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:13:51.235 INFO  [server] Blockchain connection initialized
+2026-02-07 17:13:51.236 INFO  [blockchain] Contract event listeners active
+2026-02-07 17:13:51.239 INFO  [server] Server listening on port 3001
+2026-02-07 17:13:51.239 INFO  [server] Environment: development
+2026-02-07 17:13:51.239 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:13:51.240 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:13:51.240 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:13:51.240 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.459 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.461 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:14:23.462 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:23.484 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:14:23.489 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:14:23.490 INFO  [server] Blockchain connection initialized
+2026-02-07 17:14:23.490 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 17:14:23.492 INFO  [server] Server listening on port 3001
+2026-02-07 17:14:23.494 INFO  [server] Environment: development
+2026-02-07 17:14:23.494 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:14:23.495 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:14:23.495 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:14:23.496 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.409 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.411 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:14:31.412 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:14:31.435 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:14:31.440 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:14:31.440 INFO  [server] Blockchain connection initialized
+2026-02-07 17:14:31.441 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 17:14:31.443 INFO  [server] Server listening on port 3001
+2026-02-07 17:14:31.443 INFO  [server] Environment: development
+2026-02-07 17:14:31.445 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:14:31.445 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:14:31.445 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:14:31.446 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:20:30.321 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 5.918 ms
+2026-02-07 17:20:30.490 INFO  [server] ::1 - GET /favicon.ico HTTP/1.1 404 21 - 1.059 ms
+2026-02-07 17:36:56.768 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:36:56.770 INFO  [server]   AidChain Backend Starting...
+2026-02-07 17:36:56.770 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 17:36:56.790 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 17:36:56.794 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 17:36:56.794 INFO  [server] Blockchain connection initialized
+2026-02-07 17:36:56.794 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 17:36:56.796 INFO  [server] Server listening on port 3001
+2026-02-07 17:36:56.796 INFO  [server] Environment: development
+2026-02-07 17:36:56.796 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 17:36:56.797 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 17:36:56.797 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 17:36:56.797 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:05:18.984 DEBUG [blockchain] Event poll error: could not coalesce error (error={ "code": -32000, "message": "invalid block range params" }, payload={ "id": 845, "jsonrpc": "2.0", "method": "eth_getLogs", "params": [ { "address": "0xc17f203d68285554c2231f2696c6e8f1dd11cc7d", "fromBlock": "0x51d584", "toBlock": "0x51d585", "topics": [ "0xb7df983fa8d37af9833a4077c0bce653b30a47b3bc28e189623289c7588f1ad2" ] } ] }, code=UNKNOWN_ERROR, version=6.16.0)
+2026-02-07 18:48:41.446 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:41.448 INFO  [server]   AidChain Backend Starting...
+2026-02-07 18:48:41.448 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:41.473 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 18:48:41.477 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 18:48:41.478 INFO  [server] Blockchain connection initialized
+2026-02-07 18:48:41.479 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 18:48:41.481 INFO  [server] Server listening on port 3001
+2026-02-07 18:48:41.482 INFO  [server] Environment: development
+2026-02-07 18:48:41.482 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 18:48:41.482 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 18:48:41.482 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 18:48:41.483 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:42.117 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:42.119 INFO  [server]   AidChain Backend Starting...
+2026-02-07 18:48:42.119 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:42.146 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 18:48:42.150 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 18:48:42.150 INFO  [server] Blockchain connection initialized
+2026-02-07 18:48:42.151 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 18:48:42.152 INFO  [server] Server listening on port 3001
+2026-02-07 18:48:42.153 INFO  [server] Environment: development
+2026-02-07 18:48:42.153 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 18:48:42.153 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 18:48:42.153 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 18:48:42.154 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:48:52.298 DEBUG [blockchain] Event poll error: Client network socket disconnected before secure TLS connection was established
+2026-02-07 18:49:02.266 DEBUG [blockchain] Event poll error: Client network socket disconnected before secure TLS connection was established
+2026-02-07 18:50:00.404 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:50:00.406 INFO  [server]   AidChain Backend Starting...
+2026-02-07 18:50:00.406 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 18:50:00.430 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 18:50:00.433 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 18:50:00.434 INFO  [server] Blockchain connection initialized
+2026-02-07 18:50:00.434 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 18:50:00.436 INFO  [server] Server listening on port 3001
+2026-02-07 18:50:00.437 INFO  [server] Environment: development
+2026-02-07 18:50:00.437 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 18:50:00.438 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 18:50:00.438 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 18:50:00.438 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 19:59:54.305 DEBUG [blockchain] Event poll error: could not coalesce error (error={ "code": -32000, "message": "invalid block range params" }, payload={ "id": 2090, "jsonrpc": "2.0", "method": "eth_getLogs", "params": [ { "address": "0xc17f203d68285554c2231f2696c6e8f1dd11cc7d", "fromBlock": "0x51da3f", "toBlock": "0x51da40", "topics": [ "0xb7df983fa8d37af9833a4077c0bce653b30a47b3bc28e189623289c7588f1ad2" ] } ] }, code=UNKNOWN_ERROR, version=6.16.0)
+2026-02-07 20:15:41.501 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:15:41.502 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:15:41.503 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:15:41.523 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:15:41.526 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:15:41.527 INFO  [server] Blockchain connection initialized
+2026-02-07 20:15:41.527 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:15:41.529 INFO  [server] Server listening on port 3001
+2026-02-07 20:15:41.529 INFO  [server] Environment: development
+2026-02-07 20:15:41.529 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:15:41.529 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:15:41.530 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:15:41.530 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:15:42.089 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:15:42.090 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:15:42.091 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:15:42.110 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:15:42.113 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:15:42.114 INFO  [server] Blockchain connection initialized
+2026-02-07 20:15:42.114 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:15:42.116 INFO  [server] Server listening on port 3001
+2026-02-07 20:15:42.116 INFO  [server] Environment: development
+2026-02-07 20:15:42.116 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:15:42.116 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:15:42.117 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:15:42.117 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:16:07.160 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 4.844 ms
+2026-02-07 20:16:07.164 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 1.232 ms
+2026-02-07 20:16:07.227 INFO  [server] ::1 - POST /api/auth/dev-token HTTP/1.1 200 332 - 8.396 ms
+2026-02-07 20:16:07.377 INFO  [server] ::1 - GET /api/fund/stats HTTP/1.1 200 92 - 143.926 ms
+2026-02-07 20:16:07.389 INFO  [server] WebSocket client connected (::1)
+2026-02-07 20:16:07.927 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:16:07.930 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:16:07.930 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:16:07.953 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:16:07.959 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:16:07.960 INFO  [server] Blockchain connection initialized
+2026-02-07 20:16:07.961 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:16:07.963 INFO  [server] Server listening on port 3001
+2026-02-07 20:16:07.965 INFO  [server] Environment: development
+2026-02-07 20:16:07.965 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:16:07.967 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:16:07.967 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:16:07.968 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:16:12.450 INFO  [server] WebSocket client connected (::1)
+2026-02-07 20:16:47.777 INFO  [api] New aid request from 0x1111111111111111111111111111111111111111: medical, urgency=high
+2026-02-07 20:16:48.460 INFO  [pipeline] ═══ Starting pipeline for request #0 ═══
+2026-02-07 20:16:48.462 INFO  [galileo] Verifying location: -17.05, 36.87 (device: dev-device)
+2026-02-07 20:16:48.467 DEBUG [galileo] Acquired 8 Galileo satellites
+2026-02-07 20:16:48.468 WARN  [galileo] Position mismatch: claimed vs authenticated = 295.9m
+2026-02-07 20:16:48.469 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
+2026-02-07 20:16:48.473 INFO  [server] ::1 - POST /api/requests HTTP/1.1 202 140 - 696.525 ms
+2026-02-07 20:18:21.956 INFO  [api] New aid request from 0x1111111111111111111111111111111111111111: food, urgency=critical
+2026-02-07 20:18:22.086 INFO  [pipeline] ═══ Starting pipeline for request #0 ═══
+2026-02-07 20:18:22.088 INFO  [galileo] Verifying location: -17.05, 36.87 (device: dev-device)
+2026-02-07 20:18:22.090 DEBUG [galileo] Acquired 8 Galileo satellites
+2026-02-07 20:18:22.091 WARN  [galileo] Position mismatch: claimed vs authenticated = 295.9m
+2026-02-07 20:18:22.092 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
+2026-02-07 20:18:22.093 INFO  [server] ::1 - POST /api/requests HTTP/1.1 202 140 - 134.478 ms
+2026-02-07 20:22:19.947 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:19.949 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:22:19.949 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:19.976 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:22:19.979 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:22:19.980 INFO  [server] Blockchain connection initialized
+2026-02-07 20:22:19.980 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:22:19.982 INFO  [server] Server listening on port 3001
+2026-02-07 20:22:19.982 INFO  [server] Environment: development
+2026-02-07 20:22:19.983 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:22:19.983 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:22:19.983 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:22:19.983 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:24.059 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:24.063 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:22:24.063 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:24.095 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:22:24.100 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:22:24.101 INFO  [server] Blockchain connection initialized
+2026-02-07 20:22:24.102 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:22:24.105 INFO  [server] Server listening on port 3001
+2026-02-07 20:22:24.105 INFO  [server] Environment: development
+2026-02-07 20:22:24.105 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:22:24.105 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:22:24.106 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:22:24.106 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:26.659 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:26.662 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:22:26.663 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:26.707 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:22:26.714 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:22:26.716 INFO  [server] Blockchain connection initialized
+2026-02-07 20:22:26.716 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:22:26.720 INFO  [server] Server listening on port 3001
+2026-02-07 20:22:26.721 INFO  [server] Environment: development
+2026-02-07 20:22:26.721 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:22:26.722 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:22:26.722 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:22:26.722 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:26.756 INFO  [server] WebSocket client connected (::ffff:127.0.0.1)
+2026-02-07 20:22:37.819 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:37.822 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:22:37.822 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:37.842 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:22:37.846 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:22:37.846 INFO  [server] Blockchain connection initialized
+2026-02-07 20:22:37.847 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:22:37.848 INFO  [server] Server listening on port 3001
+2026-02-07 20:22:37.849 INFO  [server] Environment: development
+2026-02-07 20:22:37.849 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:22:37.849 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:22:37.849 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:22:37.849 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:22:38.400 INFO  [server] WebSocket client connected (::1)
+2026-02-07 20:22:43.886 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 5.597 ms
+2026-02-07 20:22:43.891 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 1.142 ms
+2026-02-07 20:22:43.958 INFO  [server] ::1 - POST /api/auth/dev-token HTTP/1.1 200 332 - 18.645 ms
+2026-02-07 20:22:44.532 INFO  [server] ::1 - GET /api/fund/stats HTTP/1.1 304 - - 566.688 ms
+2026-02-07 20:22:44.542 INFO  [server] WebSocket client connected (::1)
+2026-02-07 20:23:11.812 INFO  [api] New aid request from 0x1111111111111111111111111111111111111111: medical, urgency=critical
+2026-02-07 20:23:11.934 INFO  [pipeline] ═══ Starting pipeline for request #0 ═══
+2026-02-07 20:23:11.938 INFO  [galileo] Verifying location: -17.05, 36.87 (device: dev-device)
+2026-02-07 20:23:11.941 DEBUG [galileo] Acquired 8 Galileo satellites
+2026-02-07 20:23:11.943 WARN  [galileo] Position mismatch: claimed vs authenticated = 295.9m
+2026-02-07 20:23:11.944 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
+2026-02-07 20:23:11.946 INFO  [server] ::1 - POST /api/requests HTTP/1.1 202 140 - 131.391 ms
+2026-02-07 20:25:38.322 INFO  [server] ::1 - GET /health HTTP/1.1 200 121 - 0.549 ms
+2026-02-07 20:29:10.459 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:29:10.461 INFO  [server]   AidChain Backend Starting...
+2026-02-07 20:29:10.461 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:29:10.483 INFO  [blockchain] Oracle signer: 0x8b3872032A2c7Ff1097F40E53110d50A3437c005
+2026-02-07 20:29:10.486 INFO  [blockchain] AidChain contract: 0xc17F203D68285554c2231F2696c6E8f1dD11CC7D
+2026-02-07 20:29:10.487 INFO  [server] Blockchain connection initialized
+2026-02-07 20:29:10.487 INFO  [blockchain] Contract event polling active (10s interval)
+2026-02-07 20:29:10.489 INFO  [server] Server listening on port 3001
+2026-02-07 20:29:10.489 INFO  [server] Environment: development
+2026-02-07 20:29:10.489 INFO  [server] Health: http://localhost:3001/health
+2026-02-07 20:29:10.489 INFO  [server] API docs: http://localhost:3001/api
+2026-02-07 20:29:10.489 INFO  [server] WebSocket: ws://localhost:3001/ws
+2026-02-07 20:29:10.489 INFO  [server] ═══════════════════════════════════════════
+2026-02-07 20:29:14.775 INFO  [server] WebSocket client connected (::1)

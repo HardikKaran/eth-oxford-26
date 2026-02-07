@@ -1,0 +1,3 @@
+2026-02-07 20:16:48.469 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
+2026-02-07 20:18:22.092 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
+2026-02-07 20:23:11.944 ERROR [pipeline] Pipeline failed at stage GPS_VERIFY: Galileo verification failed: Position mismatch exceeds tolerance
