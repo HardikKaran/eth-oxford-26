@@ -1,19 +1,14 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import "./IdentityRegistry.sol";
 import "./AidTreasury.sol";
 import "./FlareInterfaces.sol";
 
 contract MissionControl {
-
-    address constant FLARE_CONTRACT_REGISTRY = 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019;
     IFlareContractRegistry public registry;
-
     IdentityRegistry public identityRegistry;
     AidTreasury public treasury;
-    
-    // Admin for LLM Oracle
     address public llmOracle;
 
     enum Status { PENDING, EVENT_VERIFIED, APPROVED, FULFILLED }
@@ -39,15 +34,20 @@ contract MissionControl {
         _;
     }
 
-    constructor(address _identity, address _treasury, address _llmOracle) {
-        registry = IFlareContractRegistry(FLARE_CONTRACT_REGISTRY);
+    // UPDATED CONSTRUCTOR: Now accepts 4 arguments
+    constructor(
+        address _identity, 
+        address _treasury, 
+        address _llmOracle, 
+        address _registry // <--- This 4th argument was missing!
+    ) {
+        registry = IFlareContractRegistry(_registry);
         identityRegistry = IdentityRegistry(_identity);
         treasury = AidTreasury(_treasury);
         llmOracle = _llmOracle;
     }
 
     function createRequest(string memory _gps, string memory _aidType) external {
-        // ... (Same as before) ...
         requestCounter++;
         requests[requestCounter] = Request({
             id: requestCounter,
@@ -59,31 +59,18 @@ contract MissionControl {
         emit RequestCreated(requestCounter, msg.sender);
     }
 
-    // --- THE REAL FDC VERIFICATION ---
-    function verifyEvent(
-        uint256 _requestId, 
-        bytes32[] calldata _merkleProof,
-        bytes32 _merkleRoot,
-        bytes32 _leaf 
-    ) external {
+    function verifyEvent(uint256 _requestId, bytes32[] calldata _merkleProof, bytes32 _merkleRoot, bytes32 _leaf) external {
         Request storage req = requests[_requestId];
         require(req.status == Status.PENDING, "Invalid status");
 
-        // 1. Get the FDC Verification Contract Address dynamically
-        // Note: Check the exact name in the Registry. Usually "FdcVerification" or "FdcHub"
-        // For Hackathon safety, we look for "FdcVerification".
         address fdcAddr = registry.getContractAddressByName("FdcVerification");
-        IFdcVerification fdc = IFdcVerification(fdcAddr);
-
-        // 2. Verify Proof
-        bool valid = fdc.verifyMerkleProof(_merkleProof, _merkleRoot, _leaf);
+        bool valid = IFdcVerification(fdcAddr).verifyMerkleProof(_merkleProof, _merkleRoot, _leaf);
         require(valid, "FDC Proof Invalid");
 
         req.status = Status.EVENT_VERIFIED;
         emit EventVerified(_requestId);
     }
     
-    // ... approveAid function (same as before) ...
     function approveAid(uint256 _requestId, address _provider, uint256 _costUSD) external onlyOracle {
         Request storage req = requests[_requestId];
         require(req.status == Status.EVENT_VERIFIED, "Event not verified");
@@ -93,13 +80,7 @@ contract MissionControl {
         emit AidApproved(_requestId);
     }
 
-    // --- CONFIRM DELIVERY ---
-    function confirmDelivery(
-        uint256 _requestId,
-        bytes32[] calldata _merkleProof,
-        bytes32 _merkleRoot,
-        bytes32 _leaf 
-    ) external {
+    function confirmDelivery(uint256 _requestId, bytes32[] calldata _merkleProof, bytes32 _merkleRoot, bytes32 _leaf) external {
         Request storage req = requests[_requestId];
         require(req.status == Status.APPROVED, "Mission not approved");
 

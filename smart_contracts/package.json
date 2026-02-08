@@ -1,16 +1,18 @@
 {
-  "name": "smart_contracts",
+  "name": "humanitarian-aid-backend",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Smart contracts for Flare Hackathon",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "npx hardhat test",
+    "compile": "npx hardhat compile"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "type": "commonjs",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
   "dependencies": {
-    "@openzeppelin/contracts": "^5.4.0"
+    "dotenv": "^17.2.4"
   }
 }

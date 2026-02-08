@@ -1,18 +1,20 @@
-# Dependencies
+# Dependency directories
 node_modules/
 
-# Environment Variables (CRITICAL: Never share private keys!)
-.env
-
-# Hardhat/Foundry Build Files
+# Hardhat compiled artifacts and cache
 artifacts/
 cache/
-typechain/
 typechain-types/
+
+# Environment variables (CRITICAL: Never share this!)
+.env
+
+# Test coverage files
 coverage/
 coverage.json
-deployments/
 
-# General
+# OS and Editor system files
 .DS_Store
 Thumbs.db
+.idea/
+.vscode/
