@@ -20,10 +20,7 @@ Aegis is a decentralised, autonomous disaster response system. When a disaster s
 
 1. Listening: A monitoring service watches verified data sources.
 2. Verifying: Using Flare's FDC, we prove cryptographically on-chain that a disaster occurred at specific coordinates with a specific severity.
-3. Mobilising: This on-chain signal wakes up a LangGraph Agent Swarm.
-- Scout Agent: Analyzes terrain and population density.
-- Logistics Agent: Plots drone flight paths for supply drops.
-- Treasury Agent: Calculates the required funds based on severity.
+3. Mobilising: This on-chain signal wakes up a LangGraph agent swarm with different personalities
 4. Executing: The swarm proposes a transaction. If it matches the FDC data, the Smart Contract automatically unlocks funds (or $fXRP) to the relief teams/drones.
 
 ## Feedback: Building on Flare
