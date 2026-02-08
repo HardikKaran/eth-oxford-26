@@ -21,9 +21,9 @@ Aegis is a decentralised, autonomous disaster response system. When a disaster s
 ## Tech Stack
 - Blockchain: Flare Network (Coston2 Testnet), Solidity, Hardhat.
 - Data Oracle: Flare FDC (JsonApi Attestation Type).
-- AI Swarm: Python, LangGraph, OpenAI GPT-5.1, Anthropic Claude Sonnet 4.5, Google Gemini 3.0.
+- AI Swarm: Python, LangGraph, Groq.
 - Backend: Node.js (for FDC interactions), Python (for Agents).
-- Frontend: Next.js (Dashboard for visualization).
+- Frontend: Next.js (Dashboard for visualisation).
 
 ## Description
 Aegis is a decentralised, autonomous disaster response system. When a disaster strikes (e.g., a high-magnitude earthquake), speed is critical. Traditional aid is often delayed by verification lags and manual resource allocation. Aegis solves this by:
