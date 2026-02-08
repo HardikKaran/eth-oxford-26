@@ -6,6 +6,7 @@ entity that signs and sends transactions on behalf of disaster victims.
 """
 
 import os
+import asyncio
 import time
 import logging
 from functools import lru_cache
@@ -181,10 +182,11 @@ def is_chain_configured() -> bool:
 # ---------------------------------------------------------------------------
 # Transaction helper with retry
 # ---------------------------------------------------------------------------
-def send_tx(contract_fn, *args, max_retries: int = 3):
+def _send_tx_sync(contract_fn, *args, max_retries: int = 3):
     """
-    Build, sign, send, and wait for a contract function call.
+    Synchronous: build, sign, send, and wait for a contract function call.
     Returns the tx receipt on success, raises on failure.
+    Called via asyncio.to_thread() so it doesn't block the event loop.
     """
     w3, account, _, _ = get_chain()
 
@@ -215,7 +217,15 @@ def send_tx(contract_fn, *args, max_retries: int = 3):
             logger.warning(f"send_tx attempt {attempt}/{max_retries} failed: {e}")
             if attempt == max_retries:
                 raise
-            time.sleep(2 ** attempt)  # exponential backoff
+            time.sleep(2 ** attempt)  # blocking sleep is fine — we're in a thread
+
+
+async def send_tx(contract_fn, *args, max_retries: int = 3):
+    """
+    Async-safe wrapper: runs the blocking web3 transaction in a thread
+    so it never blocks the FastAPI event loop.
+    """
+    return await asyncio.to_thread(_send_tx_sync, contract_fn, *args, max_retries=max_retries)
 
 
 def get_request_status(request_id: int) -> dict:

@@ -37,22 +37,38 @@ const DRONE_SCRIPT: DroneScriptItem[] = [
   { text: "Payload released — medical kit delivered", icon: "package", eta: 0 },
   { text: "Confirming receipt — visual contact established", icon: "check", eta: null },
   { text: "Ascending — returning to Warehouse Alpha", icon: "nav", eta: null },
-  { text: "Drone AEG-07 dispatched for water supply run", icon: "nav", eta: 14 },
-  { text: "AEG-07 entering corridor — ETA 4 minutes", icon: "pin", eta: 8 },
-  { text: "AEG-04 battery at 47% — rerouting to charging pad", icon: "alert", eta: null },
-  { text: "AEG-07 approaching drop zone — 800m out", icon: "nav", eta: 3 },
-  { text: "Water supply payload deployed — 8L container", icon: "package", eta: 0 },
-  { text: "AEG-07 scanning area — no further survivors in sector", icon: "check", eta: null },
 ];
 
-export default function DroneTracker() {
+interface DroneTrackerProps {
+  /** When false the panel shows a "Standby" state. Events only stream when true. */
+  active?: boolean;
+  /** Change this key to reset drone operations and run a fresh cycle. */
+  resetKey?: number;
+}
+
+export default function DroneTracker({ active = false, resetKey = 0 }: DroneTrackerProps) {
   const [events, setEvents] = useState<DroneEvent[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
   const indexRef = useRef(0);
+  const startedRef = useRef(false);
+
+  // Reset state when resetKey changes (new request)
+  useEffect(() => {
+    setEvents([]);
+    indexRef.current = 0;
+    startedRef.current = false;
+  }, [resetKey]);
 
   useEffect(() => {
+    // Don't start until active, and only start once per cycle
+    if (!active || startedRef.current) return;
+    startedRef.current = true;
+
     const addEvent = () => {
-      const scriptItem = DRONE_SCRIPT[indexRef.current % DRONE_SCRIPT.length];
+      // Stop after one full cycle — don't loop
+      if (indexRef.current >= DRONE_SCRIPT.length) return;
+
+      const scriptItem = DRONE_SCRIPT[indexRef.current];
       const now = new Date();
       const time = `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}:${now.getSeconds().toString().padStart(2, "0")}`;
 
@@ -72,13 +88,18 @@ export default function DroneTracker() {
         const next = [...prev, { ...scriptItem, id: eventId, time }];
         return next.slice(-30); // keep last 30
       });
+
+      // Stop interval after last event
+      if (indexRef.current >= DRONE_SCRIPT.length) {
+        clearInterval(intervalId);
+      }
     };
 
     // First event immediately
     addEvent();
-    const interval = setInterval(addEvent, 4000 + Math.random() * 2000);
-    return () => clearInterval(interval);
-  }, []);
+    const intervalId = setInterval(addEvent, 4000 + Math.random() * 2000);
+    return () => clearInterval(intervalId);
+  }, [active, resetKey]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -91,12 +112,26 @@ export default function DroneTracker() {
       <div className="flex items-center gap-2 px-4 py-3 border-b border-border">
         <Navigation className="w-4 h-4 text-primary" />
         <h3 className="text-sm font-semibold text-slate-900">Drone Operations</h3>
-        <span className="ml-auto text-[10px] font-medium text-success flex items-center gap-1">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          LIVE
-        </span>
+        {active ? (
+          <span className="ml-auto text-[10px] font-medium text-success flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+            LIVE
+          </span>
+        ) : (
+          <span className="ml-auto text-[10px] font-medium text-muted flex items-center gap-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-slate-300" />
+            STANDBY
+          </span>
+        )}
       </div>
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 py-2 space-y-2">
+        {!active && events.length === 0 && (
+          <div className="flex flex-col items-center justify-center h-full gap-2 text-center">
+            <Navigation className="w-6 h-6 text-slate-300" />
+            <p className="text-xs text-muted">Awaiting aid approval...</p>
+            <p className="text-[10px] text-slate-300">Drone operations will begin once aid is approved on-chain.</p>
+          </div>
+        )}
         <AnimatePresence initial={false}>
           {events.map((ev) => (
             <motion.div

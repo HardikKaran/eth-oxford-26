@@ -64,7 +64,7 @@ async def run_approval(request_id: int, lat: float, lng: float, description: str
 
         # Call approveAid on-chain
         _, _, mission_control, _ = get_chain()
-        receipt = send_tx(
+        receipt = await send_tx(
             mission_control.functions.approveAid,
             request_id,
             provider_address,
