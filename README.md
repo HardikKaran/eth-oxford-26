@@ -5,8 +5,8 @@
 - Python (3.10+)
 - Metamask (connected to Coston2 Testnet)
 - Coston2 $C2FLR tokens
-- OpenAI, Gemini, Claude API key
-- USGS Earthquake API & NASA FIRMS (for wildfires)
+- Groq API Key
+- GDACS & EONET API
 
 ## Idea
 Aegis is a decentralised, autonomous disaster response system. When a disaster strikes (e.g., a high-magnitude earthquake), speed is critical. Traditional aid is often delayed by verification lags and manual resource allocation. Aegis solves this by:
