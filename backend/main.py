@@ -2,8 +2,9 @@ import os
 import json
 import asyncio
 import httpx
+import operator
 from dotenv import load_dotenv
-from typing import TypedDict, List, Optional
+from typing import TypedDict, Annotated, List, Optional
 
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
 from fastapi import FastAPI, HTTPException, Query
@@ -16,7 +17,7 @@ from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
 
 # --- CONFIGURATION ---
-MODE = "DEMO"
+MODE = "DEMO" # DEMO for video
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
 # Initialize Model
@@ -47,51 +48,95 @@ class AidRequest(BaseModel):
 
 # --- LANGGRAPH SETUP ---
 class AgentState(TypedDict):
-    messages: List[str]
+    messages: Annotated[List[str], operator.add]
     context: str
     user_request: str
     iteration: int
     verdict: str
 
+# --- AGENT DEFINITIONS ---
+AGENTS = [
+    {
+        "node": "Miller",
+        "name": "The Skeptic (Miller)",
+        "style": "Fraud Auditor — You aggressively question legitimacy, look for inconsistencies, and demand hard evidence. You distrust vague claims.",
+    },
+    {
+        "node": "Aris",
+        "name": "The Empath (Dr. Aris)",
+        "style": "Clinical Lead & Humanitarian — You prioritise human life above all. You advocate for immediate aid even with incomplete data. Empathetic but professional.",
+    },
+    {
+        "node": "Reyes",
+        "name": "The Logistician (Reyes)",
+        "style": "Supply Chain & Operations Expert — You evaluate whether the requested aid is logistically feasible: transport routes, inventory, delivery time, resource constraints.",
+    },
+    {
+        "node": "Okonkwo",
+        "name": "The Field Medic (Okonkwo)",
+        "style": "Emergency Medicine Specialist — You triage requests by medical urgency. You flag life-threatening situations and deprioritise non-critical asks.",
+    },
+    {
+        "node": "Chen",
+        "name": "The Analyst (Chen)",
+        "style": "Infrastructure & Risk Analyst — You assess structural safety, environmental hazards, access routes, and secondary disaster risks before approving aid deployment.",
+    },
+]
+
 def agent_node(state: AgentState, name: str, style: str):
     prompt = (
-        f"You are {name}. Style: {style}. Situation: {state['context']}. "
-        f"Request: {state['user_request']}. Debate history: {state['messages']}. "
-        "Provide a 15-word response challenging or supporting the request based on your persona."
+        f"You are {name}. Your expertise: {style}\n\n"
+        f"Situation: {state['context']}.\n"
+        f"User request: {state['user_request']}.\n"
+        f"Debate so far: {state['messages']}.\n\n"
+        f"Provide a sharp 15-20 word response from YOUR unique expertise, "
+        f"either challenging or supporting the request. Be specific to your domain."
     )
     res = llm.invoke(prompt)
     return {"messages": [f"{name}: {res.content}"], "iteration": state['iteration'] + 1}
 
+# Keywords that trigger automatic rejection
+MONEY_KEYWORDS = ["money", "cash", "payment", "fund", "donate", "dollar", "euro", "pound", "£", "$", "€",
+                  "transfer", "bank", "bitcoin", "crypto", "compensat", "reimburse", "salary", "wage"]
+
+def contains_money_request(text: str) -> bool:
+    lower = text.lower()
+    return any(kw in lower for kw in MONEY_KEYWORDS)
+
 def judge_node(state: AgentState):
     prompt = (
-        f"You are the final judge reviewing an aid request debate.\n"
-        f"Agent messages: {state['messages']}\n\n"
+        f"You are The Arbiter, the final judge reviewing an aid request debate.\n"
+        f"Five specialist agents have weighed in:\n"
+        f"{chr(10).join(state['messages'])}\n\n"
         f"Rules:\n"
-        f"- If the majority of agents support the request, respond VALID\n"
-        f"- If agents partially agree but want changes, respond MODIFIED\n"
-        f"- If the majority of agents oppose or doubt the request, respond DECLINED\n\n"
-        f"Respond with exactly one word: VALID, MODIFIED, or DECLINED."
+        f"- VALID: majority of agents support the request\n"
+        f"- DECLINED: majority of agents oppose or doubt the request\n\n"
+        f"Count how many agents support vs oppose. Respond with exactly one word: VALID or DECLINED."
     )
     res = llm.invoke(prompt)
     raw = res.content.strip().upper().replace(".", "")
-    # Ensure we only return a valid verdict
     if "DECLINED" in raw:
         verdict = "DECLINED"
-    elif "MODIFIED" in raw:
-        verdict = "MODIFIED"
     else:
         verdict = "VALID"
     return {"verdict": verdict}
 
+# --- BUILD LANGGRAPH WORKFLOW ---
 workflow = StateGraph(AgentState)
-workflow.add_node("Miller", lambda s: agent_node(s, "The Skeptic (Miller)", "Skeptical Auditor"))
-workflow.add_node("Aris", lambda s: agent_node(s, "The Empath (Dr. Aris)", "Clinical Lead"))
+
+# Register all agent nodes + judge
+for agent in AGENTS:
+    node_name = agent["node"]
+    workflow.add_node(node_name, lambda s, n=agent["name"], st=agent["style"]: agent_node(s, n, st))
 workflow.add_node("Judge", judge_node)
 
-workflow.set_entry_point("Miller")
-workflow.add_edge("Miller", "Aris")
-workflow.add_conditional_edges("Aris", lambda s: "Judge" if s["iteration"] >= 4 else "Miller")
+# Chain: Miller → Aris → Reyes → Okonkwo → Chen → Judge → END
+workflow.set_entry_point(AGENTS[0]["node"])
+for i in range(len(AGENTS) - 1):
+    workflow.add_edge(AGENTS[i]["node"], AGENTS[i + 1]["node"])
+workflow.add_edge(AGENTS[-1]["node"], "Judge")
 workflow.add_edge("Judge", END)
+
 graph = workflow.compile()
 
 # --- BACKGROUND TASKS ---
@@ -203,6 +248,22 @@ async def evaluate_aid(req: AidRequest):
             "reason": f"User is {round(distance)}km away. Outside zone."
         }
 
+    # Auto-decline monetary requests
+    if contains_money_request(req.description):
+        return {
+            "status": "PROCESSED",
+            "distance_km": round(distance, 2),
+            "debate": [
+                "The Skeptic (Miller): Monetary requests are outside Aegis scope — aid is material, not financial.",
+                "The Empath (Dr. Aris): Understood. We provide physical aid — medical, water, shelter — not cash.",
+                "The Logistician (Reyes): Financial disbursement has no logistics pathway in our system.",
+                "The Field Medic (Okonkwo): Medical aid is in-kind only. Cash requests indicate non-emergency.",
+                "The Analyst (Chen): Risk assessment flags monetary requests as potential fraud vectors. Declining.",
+                "The Arbiter: VERDICT IS DECLINED",
+            ],
+            "final_verdict": "DECLINED"
+        }
+
     # AI Debate
     aid_type = req.aid_type or req.description.split(".")[0][:50]
     initial_state = {
@@ -218,11 +279,28 @@ async def evaluate_aid(req: AidRequest):
     verdict = final_state.get("verdict", "PENDING")
     transcript.append(f"The Arbiter: VERDICT IS {verdict}")
 
+    # If approved, have the LLM decide exactly what aid to deploy
+    aid_recommendation = None
+    if verdict == "VALID":
+        rec_prompt = (
+            f"You are a disaster relief coordinator. Based on this situation and debate, "
+            f"decide exactly what aid to deploy.\n\n"
+            f"Disaster: {disaster['name']}\n"
+            f"User request: {req.description}\n"
+            f"Agent debate summary: {'; '.join(transcript[-5:])}\n\n"
+            f"Respond with a single concise line (max 25 words) specifying: "
+            f"what items/resources to send, quantity, and priority level. "
+            f"Example: 'Deploy 2x medical kits, 10L water, thermal blankets — Priority: CRITICAL'"
+        )
+        rec_res = llm.invoke(rec_prompt)
+        aid_recommendation = rec_res.content.strip()
+
     return {
         "status": "PROCESSED",
         "distance_km": round(distance, 2),
         "debate": transcript,
-        "final_verdict": verdict
+        "final_verdict": verdict,
+        "aid_recommendation": aid_recommendation
     }
 
 @app.get("/evaluate-stream")

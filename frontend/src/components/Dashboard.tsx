@@ -10,6 +10,7 @@ import {
   X,
   Send,
   Newspaper,
+  Clock,
 } from "lucide-react";
 import GoogleMapComponent from "./GoogleMapComponent";
 import DroneTracker from "./DroneTracker";
@@ -55,6 +56,25 @@ export default function Dashboard({
     return () => clearInterval(interval);
   }, []);
 
+  // --- Drone ETA ---
+  const [droneEta, setDroneEta] = useState<number | null>(null);
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const eta = (e as CustomEvent).detail?.eta;
+      if (typeof eta === "number") setDroneEta(eta);
+    };
+    window.addEventListener("aegis-drone-eta", handler);
+    return () => window.removeEventListener("aegis-drone-eta", handler);
+  }, []);
+
+  // --- Show aid recommendation only after debate completes ---
+  const [showRecommendation, setShowRecommendation] = useState(false);
+  useEffect(() => {
+    const handler = () => setShowRecommendation(true);
+    window.addEventListener("aegis-debate-complete", handler);
+    return () => window.removeEventListener("aegis-debate-complete", handler);
+  }, []);
+
   // --- Floating chat ---
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
@@ -86,9 +106,21 @@ export default function Dashboard({
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs font-medium text-success">
-          <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-          {evaluationResult?.status === "PROCESSED" ? "Mission Active" : "Pending"}
+        <div className="flex items-center gap-1.5 text-xs font-medium">
+          {droneEta !== null ? (
+            <>
+              <Clock className="w-3.5 h-3.5 text-primary" />
+              <span className={droneEta === 0 ? "text-success" : "text-primary"}>
+                {droneEta === 0 ? "Drone Arrived" : `Drone ETA: ${droneEta} min`}
+              </span>
+              {droneEta > 0 && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
+            </>
+          ) : (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
+              <span className="text-success">{evaluationResult?.status === "PROCESSED" ? "Drone En Route" : "Pending"}</span>
+            </>
+          )}
         </div>
       </header>
 
@@ -98,6 +130,15 @@ export default function Dashboard({
           <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
           <span className="text-[11px] font-medium text-primary">Latest Relief Request:</span>
           <span className="text-[11px] text-slate-700 truncate max-w-xl">{userMessage}</span>
+        </div>
+      )}
+
+      {/* ========== AID RECOMMENDATION ========== */}
+      {showRecommendation && evaluationResult?.aid_recommendation && (
+        <div className="flex items-center justify-center gap-2 px-6 py-2 border-b border-border bg-success/5 shrink-0">
+          <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
+          <span className="text-[11px] font-medium text-success">Aid Dispatched:</span>
+          <span className="text-[11px] text-slate-700 truncate max-w-2xl">{evaluationResult.aid_recommendation}</span>
         </div>
       )}
 

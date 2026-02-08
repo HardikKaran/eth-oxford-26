@@ -24,6 +24,7 @@ export interface EvaluationResult {
   distance_km?: number;
   debate?: string[];
   final_verdict?: string;
+  aid_recommendation?: string;
 }
 
 export interface UserLocation {

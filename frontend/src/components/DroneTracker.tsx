@@ -21,23 +21,28 @@ const ICON_MAP = {
   check: <CheckCircle2 className="w-3.5 h-3.5 text-success" />,
 };
 
-const DRONE_SCRIPT: Omit<DroneEvent, "id" | "time">[] = [
-  { text: "Drone AEG-04 dispatched from Warehouse Alpha", icon: "nav" },
-  { text: "Calibrating GPS & payload — 12.4kg medical kit", icon: "package" },
-  { text: "Cruising altitude reached — 120m AGL", icon: "nav" },
-  { text: "Approaching disaster perimeter — 2.1km out", icon: "pin" },
-  { text: "Entering danger zone — switching to thermal scan", icon: "alert" },
-  { text: "Heat signature detected — 3 individuals, quadrant B7", icon: "alert" },
-  { text: "Descending to drop altitude — 15m AGL", icon: "nav" },
-  { text: "Payload released — medical kit delivered", icon: "package" },
-  { text: "Confirming receipt — visual contact established", icon: "check" },
-  { text: "Ascending — returning to Warehouse Alpha", icon: "nav" },
-  { text: "Drone AEG-07 dispatched for water supply run", icon: "nav" },
-  { text: "AEG-07 entering corridor — ETA 4 minutes", icon: "pin" },
-  { text: "AEG-04 battery at 47% — rerouting to charging pad", icon: "alert" },
-  { text: "AEG-07 approaching drop zone — 800m out", icon: "nav" },
-  { text: "Water supply payload deployed — 8L container", icon: "package" },
-  { text: "AEG-07 scanning area — no further survivors in sector", icon: "check" },
+interface DroneScriptItem extends Omit<DroneEvent, "id" | "time"> {
+  /** ETA in minutes to show at this step, null = keep previous */
+  eta: number | null;
+}
+
+const DRONE_SCRIPT: DroneScriptItem[] = [
+  { text: "Drone AEG-04 dispatched from Warehouse Alpha", icon: "nav", eta: 12 },
+  { text: "Calibrating GPS & payload — 12.4kg medical kit", icon: "package", eta: 11 },
+  { text: "Cruising altitude reached — 120m AGL", icon: "nav", eta: 9 },
+  { text: "Approaching disaster perimeter — 2.1km out", icon: "pin", eta: 7 },
+  { text: "Entering danger zone — switching to thermal scan", icon: "alert", eta: 5 },
+  { text: "Heat signature detected — 3 individuals, quadrant B7", icon: "alert", eta: 4 },
+  { text: "Descending to drop altitude — 15m AGL", icon: "nav", eta: 2 },
+  { text: "Payload released — medical kit delivered", icon: "package", eta: 0 },
+  { text: "Confirming receipt — visual contact established", icon: "check", eta: null },
+  { text: "Ascending — returning to Warehouse Alpha", icon: "nav", eta: null },
+  { text: "Drone AEG-07 dispatched for water supply run", icon: "nav", eta: 14 },
+  { text: "AEG-07 entering corridor — ETA 4 minutes", icon: "pin", eta: 8 },
+  { text: "AEG-04 battery at 47% — rerouting to charging pad", icon: "alert", eta: null },
+  { text: "AEG-07 approaching drop zone — 800m out", icon: "nav", eta: 3 },
+  { text: "Water supply payload deployed — 8L container", icon: "package", eta: 0 },
+  { text: "AEG-07 scanning area — no further survivors in sector", icon: "check", eta: null },
 ];
 
 export default function DroneTracker() {
@@ -53,6 +58,13 @@ export default function DroneTracker() {
 
       const eventId = `drone-${globalEventId++}`;
       indexRef.current++;
+
+      // Broadcast ETA update to Dashboard
+      if (scriptItem.eta !== null && scriptItem.eta !== undefined) {
+        window.dispatchEvent(
+          new CustomEvent("aegis-drone-eta", { detail: { eta: scriptItem.eta } })
+        );
+      }
 
       setEvents((prev) => {
         // Deduplicate in case React calls the updater twice

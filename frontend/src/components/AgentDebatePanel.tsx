@@ -62,6 +62,8 @@ export default function AgentDebatePanel({
           setCurrentVerdict(initialEvaluation.final_verdict);
         }
         setIsDebating(false);
+        // Signal that debate is complete so Dashboard can show aid recommendation
+        window.dispatchEvent(new CustomEvent("aegis-debate-complete"));
         return;
       }
 
@@ -215,12 +217,10 @@ export default function AgentDebatePanel({
             className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-full ${
               currentVerdict.includes("DECLINED")
                 ? "bg-danger/10 text-danger"
-                : currentVerdict.includes("MODIFIED")
-                  ? "bg-amber-100 text-amber-600"
-                  : "bg-success/10 text-success"
+                : "bg-success/10 text-success"
             }`}
           >
-            {currentVerdict}
+            {currentVerdict.includes("DECLINED") ? "DECLINED" : "VALID"}
           </span>
         )}
         {isDebating && !currentVerdict && (
@@ -239,21 +239,19 @@ export default function AgentDebatePanel({
                 className={`flex items-center gap-2 px-3 py-2 rounded-xl border ${
                   msg.text.includes("DECLINED")
                     ? "bg-danger/10 border-danger/20"
-                    : msg.text.includes("MODIFIED")
-                      ? "bg-amber-50 border-amber-200"
-                      : "bg-success/10 border-success/20"
+                    : "bg-success/10 border-success/20"
                 }`}
               >
                 <Gavel className={`w-4 h-4 shrink-0 ${
-                  msg.text.includes("DECLINED") ? "text-danger" : msg.text.includes("MODIFIED") ? "text-amber-500" : "text-success"
+                  msg.text.includes("DECLINED") ? "text-danger" : "text-success"
                 }`} />
                 <div>
                   <p className={`text-[10px] font-semibold ${
-                    msg.text.includes("DECLINED") ? "text-danger" : msg.text.includes("MODIFIED") ? "text-amber-500" : "text-success"
+                    msg.text.includes("DECLINED") ? "text-danger" : "text-success"
                   }`}>Verdict</p>
                   <p className={`text-xs font-bold ${
-                    msg.text.includes("DECLINED") ? "text-danger" : msg.text.includes("MODIFIED") ? "text-amber-500" : "text-success"
-                  }`}>{msg.text}</p>
+                    msg.text.includes("DECLINED") ? "text-danger" : "text-success"
+                  }`}>{msg.text.includes("DECLINED") ? "DECLINED" : "VALID"}</p>
                 </div>
               </motion.div>
             ) : msg.agent === "System" ? (

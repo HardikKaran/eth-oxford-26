@@ -94,8 +94,8 @@ export default function SafetyCheck({ onRequestAssistance }: SafetyCheckProps) {
         )}
       </motion.div>
 
-      {/* CTA Button */}
-      {!loading && !error && (
+      {/* CTA Button — only when threat detected */}
+      {!loading && !error && hasThreat && (
         <motion.button
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -103,11 +103,7 @@ export default function SafetyCheck({ onRequestAssistance }: SafetyCheckProps) {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={() => userLocation && onRequestAssistance(userLocation, nearbyData?.disaster || null)}
-          className={`mt-10 px-10 py-4 rounded-full text-base font-semibold shadow-lg transition-shadow ${
-            hasThreat
-              ? "bg-danger text-white shadow-danger/25 hover:shadow-danger/40"
-              : "bg-primary text-white shadow-primary/25 hover:shadow-primary/40"
-          }`}
+          className="mt-10 px-10 py-4 rounded-full text-base font-semibold shadow-lg transition-shadow bg-danger text-white shadow-danger/25 hover:shadow-danger/40"
         >
           Request Assistance
         </motion.button>
