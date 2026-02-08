@@ -8,16 +8,6 @@
 - Groq API Key
 - GDACS & EONET API
 
-## Idea
-Aegis is a decentralised, autonomous disaster response system. When a disaster strikes (e.g., a high-magnitude earthquake), speed is critical. Traditional aid is often delayed by verification lags and manual resource allocation. Aegis solves this by:
-- Listening: A monitoring service watches verified data sources (USGS).
-- Verifying: Using Flare's FDC, we prove cryptographically on-chain that a disaster occurred at specific coordinates with a specific severity.
-- Mobilising: This on-chain signal wakes up a LangGraph Agent Swarm.
-  🕵️ Scout Agent: Analyses terrain and population density.
-  🚚 Logistics Agent: Plots drone flight paths for supply drops.
-  💰 Treasury Agent: Calculates the required funds based on severity.
-- Executing: The swarm proposes a transaction. If it matches the FDC data, the Smart Contract automatically unlocks funds (or $fXRP) to the relief teams/drones.
-
 ## Tech Stack
 - Blockchain: Flare Network (Coston2 Testnet), Solidity, Hardhat.
 - Data Oracle: Flare FDC (JsonApi Attestation Type).
