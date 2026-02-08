@@ -1,4 +1,5 @@
 import os
+import sys
 import json
 import asyncio
 import logging
@@ -6,6 +7,9 @@ import httpx
 import operator
 from dotenv import load_dotenv
 from typing import TypedDict, Annotated, List, Optional
+
+# Ensure sibling modules are importable regardless of working directory
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.responses import StreamingResponse
@@ -24,7 +28,7 @@ from delivery_monitor import schedule_delivery
 logger = logging.getLogger("aegis.backend")
 
 # --- CONFIGURATION ---
-load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
+load_dotenv(os.path.join(os.path.dirname(os.path.abspath(__file__)), ".env"))
 MODE = os.getenv("MODE")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 MAX_RANGE_KM = 10000
@@ -186,7 +190,7 @@ async def check_nearby(lat: float = Query(...), lng: float = Query(...)):
 @app.post("/evaluate")
 async def evaluate_aid(req: AidRequest):
     if MODE == "DEMO" and req.disaster_id == "demo-001":
-        disaster = {"name": "Simulated Urban Emergency", "lat": req.lat, "lon": req.lng, "radius": 10}
+        disaster = {"name": "Flash Flood — Oxford, UK", "lat": req.lat, "lon": req.lng, "radius": 10}
         distance = 0.0
     else:
         disaster = next((d for d in GLOBAL_DISASTERS if d["id"] == req.disaster_id), None) or {"name": "Manual Override", "lat": req.lat, "lon": req.lng, "radius": 50}
@@ -217,7 +221,7 @@ async def evaluate_aid(req: AidRequest):
                 _, _, mission_control, _ = get_chain()
                 gps_string = f"{req.lat},{req.lng}"
                 aid_type = req.aid_type or req.description.split()[0][:50] if req.description else "General"
-                receipt = send_tx(mission_control.functions.createRequest, gps_string, aid_type)
+                receipt = await send_tx(mission_control.functions.createRequest, gps_string, aid_type)
                 tx_hash = receipt.transactionHash.hex()
                 # Extract requestId from RequestCreated event
                 logs = mission_control.events.RequestCreated().process_receipt(receipt)
@@ -298,7 +302,15 @@ async def evaluate_stream(request_text: str, context: str):
                 if "messages" in output:
                     yield f"data: {json.dumps({'type': 'comment', 'text': output['messages'][-1]})}\n\n"
                 if "verdict" in output:
-                    yield f"data: {json.dumps({'type': 'verdict', 'text': output['verdict']})}\n\n"
+                    verdict = output["verdict"]
+                    aid_recommendation = ""
+                    if verdict == "VALID":
+                        try:
+                            rec_res = await llm.ainvoke(f"Based on: {request_text}, suggest exact items to send (20 words max).")
+                            aid_recommendation = rec_res.content.strip()
+                        except Exception:
+                            aid_recommendation = ""
+                    yield f"data: {json.dumps({'type': 'verdict', 'text': verdict, 'aid_recommendation': aid_recommendation})}\n\n"
     return StreamingResponse(stream(), media_type="text/event-stream")
 
 if __name__ == "__main__":

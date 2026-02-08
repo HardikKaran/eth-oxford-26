@@ -76,17 +76,7 @@ export default function OnChainProgressTracker({ status, txHash }: Props) {
         );
       })}
 
-      {/* Explorer link */}
-      {txHash && (
-        <a
-          href={`https://coston2-explorer.flare.network/tx/${txHash}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="ml-2 shrink-0 text-[9px] font-bold text-primary/60 hover:text-primary transition-colors underline"
-        >
-          Explorer ↗
-        </a>
-      )}
+
     </div>
   );
 }

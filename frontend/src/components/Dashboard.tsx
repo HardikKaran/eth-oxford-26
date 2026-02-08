@@ -9,15 +9,11 @@ import {
   MessageSquarePlus,
   X,
   Send,
-  Newspaper,
   Clock,
-  Link2,
 } from "lucide-react";
 import GoogleMapComponent from "./GoogleMapComponent";
 import DroneTracker from "./DroneTracker";
 import AgentDebatePanel from "./AgentDebatePanel";
-import OnChainProgressTracker from "./OnChainProgressTracker";
-import { useRequestStatus } from "@/hooks/useRequestStatus";
 import type { Disaster, EvaluationResult, UserLocation } from "@/lib/types";
 
 interface DashboardProps {
@@ -27,16 +23,6 @@ interface DashboardProps {
   evaluationResult: EvaluationResult | null;
   onBack: () => void;
 }
-
-/* Rotating FDC-verified disaster news headlines */
-const NEWS_ITEMS = [
-  "Flood waters rising in sector B — evacuation order issued",
-  "Power restored to 3 districts — grid at 64% capacity",
-  "Road A34 blocked by debris — alternate route via M40",
-  "Emergency shelters at 78% capacity — additional sites activated",
-  "Water contamination alert lifted for zones 1-4",
-  "Search & rescue teams deployed to collapsed structure on High St",
-];
 
 export default function Dashboard({
   userMessage,
@@ -49,15 +35,6 @@ export default function Dashboard({
   const disasterZone = disaster
     ? { lat: disaster.lat, lng: disaster.lon, radius: disaster.radius * 1000 }
     : { lat: mapCenter.lat, lng: mapCenter.lng - 0.002, radius: 800 };
-
-  // --- News ticker ---
-  const [newsIndex, setNewsIndex] = useState(0);
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setNewsIndex((i) => (i + 1) % NEWS_ITEMS.length);
-    }, 5000);
-    return () => clearInterval(interval);
-  }, []);
 
   // --- Drone ETA ---
   const [droneEta, setDroneEta] = useState<number | null>(null);
@@ -72,22 +49,48 @@ export default function Dashboard({
 
   // --- Show aid recommendation only after debate completes ---
   const [showRecommendation, setShowRecommendation] = useState(false);
+  // --- Drone starts after debate completes, not from chain status ---
+  const [debateComplete, setDebateComplete] = useState(false);
+  // --- Key to reset drone tracker on each new debate conclusion ---
+  const [droneResetKey, setDroneResetKey] = useState(0);
   useEffect(() => {
-    const handler = () => setShowRecommendation(true);
+    const handler = () => {
+      setShowRecommendation(true);
+      setDebateComplete(true);
+      setDroneResetKey((k) => k + 1);
+      setDroneEta(null);
+    };
     window.addEventListener("aegis-debate-complete", handler);
     return () => window.removeEventListener("aegis-debate-complete", handler);
+  }, []);
+
+  // --- Track latest request message & aid recommendation (updated on new requests) ---
+  const [latestMessage, setLatestMessage] = useState(userMessage);
+  const [latestAidRec, setLatestAidRec] = useState(evaluationResult?.aid_recommendation || "");
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.description) setLatestMessage(detail.description);
+      // Only update aid recommendation when a non-empty value arrives
+      // This prevents it from disappearing while the LLM is still generating
+      if (detail?.aid_recommendation) {
+        setLatestAidRec(detail.aid_recommendation);
+      }
+    };
+    window.addEventListener("aegis-evaluation-result", handler);
+    return () => window.removeEventListener("aegis-evaluation-result", handler);
   }, []);
 
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
 
-  // --- On-chain request status polling ---
-  const { data: chainStatus } = useRequestStatus(
-    evaluationResult?.on_chain ? evaluationResult.request_id : null
-  );
+  // Drone operations only start after agent swarm reaches a conclusion
+  const droneActive = debateComplete;
 
   const handleChatSubmit = () => {
     if (chatMessage.trim().length === 0) return;
+    // Update latest message immediately
+    setLatestMessage(chatMessage);
     // Dispatch event that AgentDebatePanel listens for
     window.dispatchEvent(
       new CustomEvent("aegis-new-request", { detail: { description: chatMessage } })
@@ -111,21 +114,24 @@ export default function Dashboard({
             <Shield className="w-5 h-5 text-primary" />
             <span className="text-base font-semibold text-slate-900">Aegis</span>
             {evaluationResult?.on_chain && evaluationResult.request_id != null && (
-              <a
-                href={`https://coston2-explorer.flare.network/tx/${evaluationResult.tx_hash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/5 border border-primary/15 text-[9px] font-bold text-primary hover:bg-primary/10 transition-colors"
-              >
-                <Link2 className="w-2.5 h-2.5" />
+              <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/5 border border-primary/15 text-[9px] font-bold text-primary">
                 Request #{evaluationResult.request_id}
-              </a>
+              </span>
             )}
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 text-xs font-medium">
-          {droneEta !== null ? (
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setChatOpen(true)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-primary bg-primary/5 border border-primary/15 hover:bg-primary/10 transition-colors"
+          >
+            <MessageSquarePlus className="w-3.5 h-3.5" />
+            Request Additional Aid
+          </button>
+
+          <div className="flex items-center gap-1.5 text-xs font-medium">
+          {droneActive && droneEta !== null ? (
             <>
               <Clock className="w-3.5 h-3.5 text-primary" />
               <span className={droneEta === 0 ? "text-success" : "text-primary"}>
@@ -133,76 +139,38 @@ export default function Dashboard({
               </span>
               {droneEta > 0 && <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />}
             </>
-          ) : (
+          ) : droneActive ? (
             <>
               <span className="w-1.5 h-1.5 rounded-full bg-success animate-pulse" />
-              <span className="text-success">{evaluationResult?.status === "PROCESSED" ? "Drone En Route" : "Pending"}</span>
+              <span className="text-success">Drone Dispatched</span>
+            </>
+          ) : (
+            <>
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+              <span className="text-amber-600">Awaiting Approval</span>
             </>
           )}
+          </div>
         </div>
       </header>
 
       {/* ========== LATEST RELIEF + INFO BAR ========== */}
-      {userMessage && (
+      {latestMessage && (
         <div className="flex items-center justify-center gap-2 px-6 py-2.5 border-b border-border bg-primary/5 shrink-0">
           <Shield className="w-3.5 h-3.5 text-primary shrink-0" />
           <span className="text-[11px] font-medium text-primary">Latest Relief Request:</span>
-          <span className="text-[11px] text-slate-700 truncate max-w-xl">{userMessage}</span>
+          <span className="text-[11px] text-slate-700 truncate max-w-xl">{latestMessage}</span>
         </div>
       )}
 
       {/* ========== AID RECOMMENDATION ========== */}
-      {showRecommendation && evaluationResult?.aid_recommendation && (
+      {showRecommendation && latestAidRec && (
         <div className="flex items-center justify-center gap-2 px-6 py-2 border-b border-border bg-success/5 shrink-0">
           <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
           <span className="text-[11px] font-medium text-success">Aid Dispatched:</span>
-          <span className="text-[11px] text-slate-700 truncate max-w-2xl">{evaluationResult.aid_recommendation}</span>
+          <span className="text-[11px] text-slate-700 truncate max-w-2xl">{latestAidRec}</span>
         </div>
       )}
-
-      {/* ========== ON-CHAIN PROGRESS TRACKER ========== */}
-      {evaluationResult?.on_chain && evaluationResult.request_id != null && (
-        <div className="flex items-center px-6 py-2 border-b border-border bg-card shrink-0">
-          <OnChainProgressTracker
-            status={chainStatus}
-            txHash={evaluationResult.tx_hash}
-          />
-        </div>
-      )}
-
-      <div className="flex items-stretch border-b border-border shrink-0" style={{ minHeight: 52 }}>
-        {/* News ticker — takes more space */}
-        <div className="flex items-center gap-3 px-5 py-3 border-r border-border bg-card overflow-hidden" style={{ flex: 4 }}>
-          <Newspaper className="w-4 h-4 text-primary shrink-0" />
-          <div className="flex-1 min-w-0 overflow-hidden">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={newsIndex}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.3 }}
-                className="text-xs text-slate-700"
-              >
-                {NEWS_ITEMS[newsIndex]}
-              </motion.p>
-            </AnimatePresence>
-          </div>
-          <span className="shrink-0 flex items-center gap-1 text-[10px] font-bold text-primary/60">
-            <CheckCircle2 className="w-3.5 h-3.5" />
-            FDC
-          </span>
-        </div>
-
-        {/* Request more help — smaller */}
-        <button
-          onClick={() => setChatOpen(true)}
-          className="flex items-center justify-center gap-2 px-5 py-3 bg-card hover:bg-surface transition-colors group" style={{ flex: 3 }}
-        >
-          <MessageSquarePlus className="w-4 h-4 text-primary group-hover:scale-110 transition-transform" />
-          <span className="text-xs font-medium text-slate-700">Request Additional Aid</span>
-        </button>
-      </div>
 
       {/* ========== MAIN CONTENT ========== */}
       <main className="flex-1 flex overflow-hidden p-4 gap-4">
@@ -219,7 +187,7 @@ export default function Dashboard({
         <div className="w-1/2 flex flex-col gap-4 min-h-0">
           {/* Top — Drone Tracker */}
           <div className="flex-1 min-h-0 rounded-2xl border border-border bg-card overflow-hidden">
-            <DroneTracker />
+             <DroneTracker active={droneActive} resetKey={droneResetKey} />
           </div>
 
           {/* Bottom — Agent Debate */}

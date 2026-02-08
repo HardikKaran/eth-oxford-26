@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { API_BASE } from "@/lib/types";
 
 export interface OnChainStatus {
@@ -12,10 +12,14 @@ export interface OnChainStatus {
 /**
  * Polls GET /request-status/{requestId} every `intervalMs` milliseconds.
  * Stops polling once status reaches FULFILLED.
+ *
+ * Uses a ref for the "fulfilled" check so the polling interval is only
+ * created once per requestId (no stale closure / interval churn).
  */
-export function useRequestStatus(requestId: number | null | undefined, intervalMs = 10_000) {
+export function useRequestStatus(requestId: number | null | undefined, intervalMs = 5_000) {
   const [data, setData] = useState<OnChainStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const fulfilledRef = useRef(false);
 
   const fetchStatus = useCallback(async () => {
     if (requestId == null) return;
@@ -25,6 +29,9 @@ export function useRequestStatus(requestId: number | null | undefined, intervalM
       const json: OnChainStatus = await res.json();
       setData(json);
       setError(null);
+      if (json.status === "FULFILLED") {
+        fulfilledRef.current = true;
+      }
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Unknown error");
     }
@@ -33,17 +40,18 @@ export function useRequestStatus(requestId: number | null | undefined, intervalM
   useEffect(() => {
     if (requestId == null) return;
 
+    fulfilledRef.current = false;
+
     // Fetch immediately
     fetchStatus();
 
     const id = setInterval(() => {
-      // Stop polling if already fulfilled
-      if (data?.status === "FULFILLED") return;
+      if (fulfilledRef.current) return;
       fetchStatus();
     }, intervalMs);
 
     return () => clearInterval(id);
-  }, [requestId, intervalMs, fetchStatus, data?.status]);
+  }, [requestId, intervalMs, fetchStatus]);
 
   return { data, error };
 }

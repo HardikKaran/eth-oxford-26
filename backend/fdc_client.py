@@ -52,7 +52,7 @@ async def verify_event(request_id: int, lat: float, lng: float) -> str | None:
         _, _, mission_control, _ = get_chain()
         proof, root, leaf = _mock_merkle_proof(request_id, "disaster_verified", lat, lng)
 
-        receipt = send_tx(
+        receipt = await send_tx(
             mission_control.functions.verifyEvent,
             request_id, proof, root, leaf
         )
@@ -80,7 +80,7 @@ async def confirm_delivery(request_id: int) -> str | None:
         _, _, mission_control, _ = get_chain()
         proof, root, leaf = _mock_merkle_proof(request_id, "delivery_confirmed")
 
-        receipt = send_tx(
+        receipt = await send_tx(
             mission_control.functions.confirmDelivery,
             request_id, proof, root, leaf
         )

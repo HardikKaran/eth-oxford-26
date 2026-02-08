@@ -95,117 +95,63 @@ export default function AgentDebatePanel({
         { id: sepId, agent: "System", text: `New request: "${description}"`, type: "comment" },
       ]);
 
-      const disasterName = disaster?.name || "Unknown Disaster";
-      const context = `Disaster: ${disasterName}. Aid Type: ${description.split(".")[0].slice(0, 50)}`;
-
+      // Use POST /evaluate which reliably returns aid_recommendation
       try {
-        // Try SSE stream first
-        const url = new URL(`${API_BASE}/evaluate-stream`);
-        url.searchParams.set("request_text", description);
-        url.searchParams.set("context", context);
+        const res = await fetch(`${API_BASE}/evaluate`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            disaster_id: disaster?.id || "demo-001",
+            description,
+            lat: userLocation.lat,
+            lng: userLocation.lng,
+          }),
+        });
 
-        const eventSource = new EventSource(url.toString());
-        const buffer: string[] = [];
-        let displayIndex = 0;
+        if (!res.ok) throw new Error("Failed");
+        const result: EvaluationResult = await res.json();
 
-        eventSource.onmessage = (event) => {
-          try {
-            const data = JSON.parse(event.data);
-            if (data.type === "comment") {
-              buffer.push(data.text);
-            } else if (data.type === "verdict") {
-              buffer.push(`__VERDICT__${data.text}`);
-              eventSource.close();
-            }
-          } catch {
-            /* skip */
-          }
-        };
-
-        eventSource.onerror = () => {
-          eventSource.close();
-          // Fallback to POST
-          fallbackRequest(description);
-        };
-
-        // Drain buffer with 3s delays
-        const drainInterval = setInterval(() => {
-          if (displayIndex < buffer.length) {
-            const raw = buffer[displayIndex];
-            if (raw.startsWith("__VERDICT__")) {
-              const v = raw.replace("__VERDICT__", "");
+        // Replay with delays
+        const debate = result.debate || [];
+        let i = 0;
+        const interval = setInterval(() => {
+          if (i >= debate.length) {
+            clearInterval(interval);
+            if (result.final_verdict) {
               const vid = msgIdRef.current++;
-              setMessages((prev) => [...prev, { id: vid, agent: "The Arbiter", text: v, type: "verdict" }]);
-              setCurrentVerdict(v);
-              setIsDebating(false);
-              clearInterval(drainInterval);
-            } else {
-              const colonIdx = raw.indexOf(":");
-              const agent = colonIdx > 0 ? raw.slice(0, colonIdx).trim() : "Agent";
-              const text = colonIdx > 0 ? raw.slice(colonIdx + 1).trim() : raw;
-              const id = msgIdRef.current++;
-              setMessages((prev) => [...prev, { id, agent, text, type: "comment" }]);
+              setMessages((prev) => [
+                ...prev,
+                { id: vid, agent: "The Arbiter", text: result.final_verdict!, type: "verdict" },
+              ]);
+              setCurrentVerdict(result.final_verdict);
             }
-            displayIndex++;
+            setIsDebating(false);
+            // Notify Dashboard of new evaluation result with aid recommendation
+            window.dispatchEvent(new CustomEvent("aegis-evaluation-result", {
+              detail: { description, aid_recommendation: result.aid_recommendation || "" }
+            }));
+            window.dispatchEvent(new CustomEvent("aegis-debate-complete"));
+            return;
           }
+          const msg = debate[i];
+          const colonIdx = msg.indexOf(":");
+          const agent = colonIdx > 0 ? msg.slice(0, colonIdx).trim() : "Agent";
+          const text = colonIdx > 0 ? msg.slice(colonIdx + 1).trim() : msg;
+          const id = msgIdRef.current++;
+          setMessages((prev) => [...prev, { id, agent, text, type: "comment" }]);
+          i++;
         }, DELAY_MS);
       } catch {
-        fallbackRequest(description);
+        const eid = msgIdRef.current++;
+        setMessages((prev) => [
+          ...prev,
+          { id: eid, agent: "System", text: "Connection failed. Please try again.", type: "comment" },
+        ]);
+        setIsDebating(false);
       }
     },
     [disaster, userLocation]
   );
-
-  const fallbackRequest = async (description: string) => {
-    try {
-      const res = await fetch(`${API_BASE}/evaluate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          disaster_id: disaster?.id || "demo-001",
-          description,
-          lat: userLocation!.lat,
-          lng: userLocation!.lng,
-        }),
-      });
-
-      if (!res.ok) throw new Error("Failed");
-      const result: EvaluationResult = await res.json();
-
-      // Replay with delays
-      const debate = result.debate || [];
-      let i = 0;
-      const interval = setInterval(() => {
-        if (i >= debate.length) {
-          clearInterval(interval);
-          if (result.final_verdict) {
-            const vid = msgIdRef.current++;
-            setMessages((prev) => [
-              ...prev,
-              { id: vid, agent: "The Arbiter", text: result.final_verdict!, type: "verdict" },
-            ]);
-            setCurrentVerdict(result.final_verdict);
-          }
-          setIsDebating(false);
-          return;
-        }
-        const msg = debate[i];
-        const colonIdx = msg.indexOf(":");
-        const agent = colonIdx > 0 ? msg.slice(0, colonIdx).trim() : "Agent";
-        const text = colonIdx > 0 ? msg.slice(colonIdx + 1).trim() : msg;
-        const id = msgIdRef.current++;
-        setMessages((prev) => [...prev, { id, agent, text, type: "comment" }]);
-        i++;
-      }, DELAY_MS);
-    } catch {
-      const eid = msgIdRef.current++;
-      setMessages((prev) => [
-        ...prev,
-        { id: eid, agent: "System", text: "Connection failed. Retrying...", type: "comment" },
-      ]);
-      setIsDebating(false);
-    }
-  };
 
   return (
     <div className="flex flex-col h-full" data-debate-panel>
