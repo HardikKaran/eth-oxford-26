@@ -1,6 +1,7 @@
 import os
 import json
 import asyncio
+import logging
 import httpx
 import operator
 from dotenv import load_dotenv
@@ -14,6 +15,13 @@ from geopy.distance import geodesic
 from geopy.geocoders import Nominatim
 from langchain_groq import ChatGroq
 from langgraph.graph import StateGraph, END
+
+from chain import is_chain_configured, get_chain, send_tx, get_request_status, STATUS_MAP, log_chain_event, ON_CHAIN_EVENTS
+from fdc_client import verify_event
+from approval_flow import run_approval
+from delivery_monitor import schedule_delivery
+
+logger = logging.getLogger("aegis.backend")
 
 # --- CONFIGURATION ---
 load_dotenv(os.path.join(os.path.dirname(__file__), ".env"))
@@ -195,17 +203,91 @@ async def evaluate_aid(req: AidRequest):
     verdict = final_state.get("verdict", "DECLINED")
     
     aid_rec = None
+    request_id = None
+    tx_hash = None
+    on_chain = False
+
     if verdict == "VALID":
         rec_res = llm.invoke(f"Based on: {req.description}, suggest exact items to send (20 words max).")
         aid_rec = rec_res.content.strip()
+
+        # Submit on-chain via MissionControl.createRequest()
+        if is_chain_configured():
+            try:
+                _, _, mission_control, _ = get_chain()
+                gps_string = f"{req.lat},{req.lng}"
+                aid_type = req.aid_type or req.description.split()[0][:50] if req.description else "General"
+                receipt = send_tx(mission_control.functions.createRequest, gps_string, aid_type)
+                tx_hash = receipt.transactionHash.hex()
+                # Extract requestId from RequestCreated event
+                logs = mission_control.events.RequestCreated().process_receipt(receipt)
+                if logs:
+                    request_id = logs[0]["args"]["id"]
+                on_chain = True
+                logger.info(f"On-chain request #{request_id} — tx {tx_hash}")
+
+                # Kick off background verification → approval → delivery pipeline
+                asyncio.create_task(verify_and_approve(
+                    request_id, req.lat, req.lng, req.description, disaster['name']
+                ))
+
+            except Exception as e:
+                logger.error(f"Chain submission failed: {e}")
+                on_chain = False
 
     return {
         "status": "PROCESSED",
         "distance_km": round(distance, 2),
         "debate": final_state.get("messages", []) + [f"Arbiter: {verdict}"],
         "final_verdict": verdict,
-        "aid_recommendation": aid_rec
+        "aid_recommendation": aid_rec,
+        "request_id": request_id,
+        "tx_hash": tx_hash,
+        "on_chain": on_chain,
     }
+
+async def verify_and_approve(request_id: int, lat: float, lng: float, description: str, disaster_name: str):
+    """
+    Background pipeline: verifyEvent → approveAid → scheduleDelivery.
+    Runs after a VALID verdict creates an on-chain request.
+    """
+    # Step 1: FDC event verification (mock proof)
+    await asyncio.sleep(3)  # simulate attestation delay
+    verify_tx = await verify_event(request_id, lat, lng)
+    if not verify_tx:
+        logger.error(f"Pipeline #{request_id}: verifyEvent failed — stopping")
+        return
+    logger.info(f"Pipeline #{request_id}: event verified")
+
+    # Step 2: LLM allocation decision → approveAid
+    await asyncio.sleep(2)  # small delay for realism
+    approve_tx = await run_approval(request_id, lat, lng, description, disaster_name)
+    if not approve_tx:
+        logger.error(f"Pipeline #{request_id}: approveAid failed — stopping")
+        return
+    logger.info(f"Pipeline #{request_id}: aid approved")
+
+    # Step 3: Schedule simulated delivery → confirmDelivery → payout
+    asyncio.create_task(schedule_delivery(request_id))
+    logger.info(f"Pipeline #{request_id}: delivery scheduled")
+
+
+@app.get("/request-status/{request_id}")
+async def request_status(request_id: int):
+    """Read on-chain request status from MissionControl."""
+    if not is_chain_configured():
+        raise HTTPException(status_code=503, detail="Chain not configured")
+    try:
+        data = get_request_status(request_id)
+        return data
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/on-chain-events")
+async def get_on_chain_events():
+    return ON_CHAIN_EVENTS
+
 
 @app.get("/evaluate-stream")
 async def evaluate_stream(request_text: str, context: str):

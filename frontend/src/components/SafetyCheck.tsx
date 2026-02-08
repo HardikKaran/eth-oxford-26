@@ -41,10 +41,23 @@ export default function SafetyCheck({ onRequestAssistance }: SafetyCheckProps) {
           setLoading(false);
         }
       },
-      () => {
-        setError("Location access denied. Please allow location access to use Aegis.");
-        setLoading(false);
-      }
+      async () => {
+        // Geolocation denied or failed — fall back to Oxford
+        const fallback = { lat: 51.7520, lng: -1.2577 };
+        setUserLocation(fallback);
+        try {
+          const res = await fetch(`${API_BASE}/nearby?lat=${fallback.lat}&lng=${fallback.lng}`);
+          if (!res.ok) throw new Error("Backend unreachable");
+          const data: NearbyResponse = await res.json();
+          setNearbyData(data);
+          setLocationName(data.location_name || "Oxford, UK (default)");
+        } catch {
+          setError("Could not connect to Aegis servers. Please ensure the backend is running.");
+        } finally {
+          setLoading(false);
+        }
+      },
+      { timeout: 5000, maximumAge: 60000 }
     );
   }, []);
 

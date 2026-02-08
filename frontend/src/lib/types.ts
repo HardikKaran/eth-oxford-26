@@ -25,6 +25,9 @@ export interface EvaluationResult {
   debate?: string[];
   final_verdict?: string;
   aid_recommendation?: string;
+  request_id?: number;
+  tx_hash?: string;
+  on_chain?: boolean;
 }
 
 export interface UserLocation {

@@ -21,6 +21,30 @@ async function main() {
   await dex.waitForDeployment();
   console.log("✅ Mock Dex Router deployed to:", await dex.getAddress());
 
+  // --- 1b. Deploy Mock FDC Verification + Mock Contract Registry ---
+  const MockFdc = await ethers.getContractFactory("MockFdcVerification");
+  const fdc = await MockFdc.deploy();
+  await fdc.waitForDeployment();
+  console.log("✅ MockFdcVerification deployed to:", await fdc.getAddress());
+
+  const MockRegistry = await ethers.getContractFactory("MockContractRegistry");
+  const mockRegistry = await MockRegistry.deploy();
+  await mockRegistry.waitForDeployment();
+  console.log("✅ MockContractRegistry deployed to:", await mockRegistry.getAddress());
+
+  // Register the mock FDC in the mock registry
+  await mockRegistry.setContractAddress("FdcVerification", await fdc.getAddress());
+  console.log("   → Registered FdcVerification in MockContractRegistry");
+
+  // Deploy and register Mock FTSO Registry (for Treasury price feeds)
+  const MockFtso = await ethers.getContractFactory("MockFtsoRegistry");
+  const ftso = await MockFtso.deploy();
+  await ftso.waitForDeployment();
+  console.log("✅ MockFtsoRegistry deployed to:", await ftso.getAddress());
+
+  await mockRegistry.setContractAddress("FtsoRegistry", await ftso.getAddress());
+  console.log("   → Registered FtsoRegistry in MockContractRegistry");
+
   // --- 2. Deploy Identity Registry ---
   const Identity = await ethers.getContractFactory("IdentityRegistry");
   const identity = await Identity.deploy();
@@ -28,17 +52,13 @@ async function main() {
   console.log("✅ IdentityRegistry deployed to:", await identity.getAddress());
 
   // --- 3. Deploy Treasury ---
-  // Note: We use the MOCK Tokens, but the REAL Flare Registry? 
-  // Actually, we pass the real registry address to the constructor.
-  // Coston2 Registry Address: 0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019
-  const COSTON2_REGISTRY = "0xaD67FE66660Fb8dFE9d6b1b4240d8650e30F6019";
-  
+  // Uses our mock registry since the FTSO price feed isn't needed for the demo
   const Treasury = await ethers.getContractFactory("AidTreasury");
   const treasury = await Treasury.deploy(
     await dex.getAddress(),
     await fxrp.getAddress(),
     await usdc.getAddress(),
-    COSTON2_REGISTRY // <--- This connects us to the REAL FTSO!!
+    await mockRegistry.getAddress()
   );
   await treasury.waitForDeployment();
   console.log("✅ AidTreasury deployed to:", await treasury.getAddress());
@@ -49,7 +69,7 @@ async function main() {
     await identity.getAddress(),
     await treasury.getAddress(),
     deployer.address, // We set YOU as the LLM Oracle for the demo
-    COSTON2_REGISTRY // <--- This connects us to the REAL FDC!!
+    await mockRegistry.getAddress() // Uses MockContractRegistry → MockFdcVerification
   );
   await missionControl.waitForDeployment();
   console.log("✅ MissionControl deployed to:", await missionControl.getAddress());
@@ -70,7 +90,10 @@ async function main() {
   // Fund the Treasury with FXRP (The "Donations")
   await fxrp.transfer(await treasury.getAddress(), ethers.parseEther("5000"));
 
-  console.log("🎉 Deployment Complete! Copy these addresses to your Frontend.");
+  console.log("\n🎉 Deployment Complete! Copy these addresses to your backend/.env:");
+  console.log(`   MISSION_CONTROL_ADDRESS=${await missionControl.getAddress()}`);
+  console.log(`   AID_TREASURY_ADDRESS=${await treasury.getAddress()}`);
+  console.log(`   IDENTITY_REGISTRY_ADDRESS=${await identity.getAddress()}`);
 }
 
 main().catch((error) => {

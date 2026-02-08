@@ -11,10 +11,13 @@ import {
   Send,
   Newspaper,
   Clock,
+  Link2,
 } from "lucide-react";
 import GoogleMapComponent from "./GoogleMapComponent";
 import DroneTracker from "./DroneTracker";
 import AgentDebatePanel from "./AgentDebatePanel";
+import OnChainProgressTracker from "./OnChainProgressTracker";
+import { useRequestStatus } from "@/hooks/useRequestStatus";
 import type { Disaster, EvaluationResult, UserLocation } from "@/lib/types";
 
 interface DashboardProps {
@@ -75,9 +78,13 @@ export default function Dashboard({
     return () => window.removeEventListener("aegis-debate-complete", handler);
   }, []);
 
-  // --- Floating chat ---
   const [chatOpen, setChatOpen] = useState(false);
   const [chatMessage, setChatMessage] = useState("");
+
+  // --- On-chain request status polling ---
+  const { data: chainStatus } = useRequestStatus(
+    evaluationResult?.on_chain ? evaluationResult.request_id : null
+  );
 
   const handleChatSubmit = () => {
     if (chatMessage.trim().length === 0) return;
@@ -103,6 +110,17 @@ export default function Dashboard({
           <div className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-primary" />
             <span className="text-base font-semibold text-slate-900">Aegis</span>
+            {evaluationResult?.on_chain && evaluationResult.request_id != null && (
+              <a
+                href={`https://coston2-explorer.flare.network/tx/${evaluationResult.tx_hash}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/5 border border-primary/15 text-[9px] font-bold text-primary hover:bg-primary/10 transition-colors"
+              >
+                <Link2 className="w-2.5 h-2.5" />
+                Request #{evaluationResult.request_id}
+              </a>
+            )}
           </div>
         </div>
 
@@ -139,6 +157,16 @@ export default function Dashboard({
           <CheckCircle2 className="w-3.5 h-3.5 text-success shrink-0" />
           <span className="text-[11px] font-medium text-success">Aid Dispatched:</span>
           <span className="text-[11px] text-slate-700 truncate max-w-2xl">{evaluationResult.aid_recommendation}</span>
+        </div>
+      )}
+
+      {/* ========== ON-CHAIN PROGRESS TRACKER ========== */}
+      {evaluationResult?.on_chain && evaluationResult.request_id != null && (
+        <div className="flex items-center px-6 py-2 border-b border-border bg-card shrink-0">
+          <OnChainProgressTracker
+            status={chainStatus}
+            txHash={evaluationResult.tx_hash}
+          />
         </div>
       )}
 

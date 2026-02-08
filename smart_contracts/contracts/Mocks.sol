@@ -25,3 +25,37 @@ contract MockDexRouter {
         return amounts;
     }
 }
+
+// 3. Mock FDC Verification — always returns true for any proof
+contract MockFdcVerification {
+    function verifyMerkleProof(
+        bytes32[] calldata /* proof */,
+        bytes32 /* merkleRoot */,
+        bytes32 /* leaf */
+    ) external pure returns (bool) {
+        return true;
+    }
+}
+
+// 4. Mock Contract Registry — maps name strings to addresses
+contract MockContractRegistry {
+    mapping(string => address) private _contracts;
+
+    function setContractAddress(string calldata _name, address _addr) external {
+        _contracts[_name] = _addr;
+    }
+
+    function getContractAddressByName(string calldata _name) external view returns (address) {
+        return _contracts[_name];
+    }
+}
+
+// 5. Mock FTSO Registry — returns a fixed price for any symbol
+contract MockFtsoRegistry {
+    // Returns a fixed $0.50 price with 5 decimals (50000)
+    function getCurrentPriceWithDecimals(
+        string memory /* _symbol */
+    ) external view returns (uint256 _price, uint256 _timestamp, uint256 _decimals) {
+        return (50000, block.timestamp, 5);
+    }
+}
